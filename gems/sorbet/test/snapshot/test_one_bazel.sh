@@ -27,11 +27,26 @@ else
 fi
 # --- end runfiles.bash initialization ---
 
-# The name of the ruby bazel package to use
+
+# ----- Option parsing -----
+
+# these positional arguments are supplied in snapshot.bzl
 ruby_package=$1
+test_name=$2
+
+if [[ "test_name" =~ "partial/*" ]]; then
+  is_partial=1
+else
+  is_partial=
+fi
+
+# ----- Environment setup -----
 
 # Add ruby to the path
 PATH="$(dirname "$(rlocation "${ruby_package}/ruby")"):$PATH"
+
+# Put the bundler library into RUBYLIB
+source $(rlocation "gems/bundler/bundle-env")
 
 # Add bundler to the path
 BUNDLER_LOC=$(dirname "$(rlocation "gems/bundler/bundle")")
@@ -42,20 +57,20 @@ export PATH
 
 repo_root="$PWD"
 
-# The test to run
 test_root="${repo_root}/gems/sorbet/test/snapshot/$2"
-test_src="${test_root}/src"
 
-# Setup sorbet
+srb="${repo_root}/gems/sorbet/bin/srb"
+
+# Use the sorbet executable built by bazel
 SRB_SORBET_EXE="$PWD/main/sorbet"
 
-# Setup the run environment
-(
-  echo "test_src: ${test_src}"
-  cd $test_src
+HOME=$test_root
+export HOME
 
-  HOME=$test_src
-  export HOME
+# ----- Run the test -----
+
+(
+  cd $test_root/src
 
   # Setup the vendor/cache directory to include all gems required for any test
   mkdir vendor
@@ -64,4 +79,12 @@ SRB_SORBET_EXE="$PWD/main/sorbet"
   # https://bundler.io/v2.0/man/bundle-install.1.html#DEPLOYMENT-MODE
   # Passing --local to never consult rubygems.org
   bundle install --deployment --local
+
+  bundle check
+
+  bundle exec ruby -e 'puts $:'
+
+  # run `srb init`
+  SRB_YES=1 bundle exec "$srb" init \
+    || find . -type f | xargs -L 1 -t bundle exec "$srb" tc --no-config --error-white-list 1000
 )

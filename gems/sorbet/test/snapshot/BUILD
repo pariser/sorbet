@@ -3,7 +3,7 @@ load(":snapshot.bzl", _snapshot_test = "snapshot_test", _snapshot_tests = "snaps
 test_suite(
     name = "snapshot",
     tests = [
-        _snapshot_test("partial/stupidedi")
+        _snapshot_test("partial/typed-ignore"),
     ],
 )
 

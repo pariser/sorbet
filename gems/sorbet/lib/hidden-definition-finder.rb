@@ -143,7 +143,7 @@ class Sorbet::Private::HiddenMethodFinder
     end
     File.write(RBI_CONSTANTS, io.read)
     io.close
-    raise "#{TMP_RBI} had unexpected errors. Check this file for a clue: #{RBI_CONSTANTS_ERR}" unless $?.success?
+    raise "#{TMP_RBI} had unexpected errors\n#{File.read(RBI_CONSTANTS_ERR)}" unless $?.success?
   end
 
   def read_constants

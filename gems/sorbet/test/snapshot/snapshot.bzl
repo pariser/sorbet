@@ -18,22 +18,20 @@ def snapshot_test(test_path):
     test_path is of the form `total/test` or `partial/test`.
     """
 
-    test_name = 'test_{}'.format(test_path)
+    test_name = "test_{}".format(test_path)
 
     native.sh_test(
         name = test_name,
-        srcs = [ "test_one_bazel.sh" ],
+        srcs = ["test_one_bazel.sh"],
         data = [
             "//main:sorbet",
             "//gems/sorbet:sorbet",
-
             "@ruby_2_4_3//:ruby",
-
             "@gems//gems",
             "@gems//bundler:bundle",
             "@gems//bundler:bundler",
             "@gems//bundler:bundle-env",
-        ] + native.glob([ "{}/**/*".format(test_path) ]),
+        ] + native.glob(["{}/**/*".format(test_path)]),
         deps = [
             ":logging",
         ],

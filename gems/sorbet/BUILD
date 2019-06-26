@@ -1,4 +1,3 @@
-
 filegroup(
     name = "sorbet",
     srcs = glob([

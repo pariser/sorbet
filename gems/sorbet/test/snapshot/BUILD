@@ -9,5 +9,5 @@ test_suite(
 
 sh_library(
     name = "logging",
-    srcs = [ "logging.sh" ],
+    srcs = ["logging.sh"],
 )

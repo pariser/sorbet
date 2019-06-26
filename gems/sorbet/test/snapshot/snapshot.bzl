@@ -3,7 +3,7 @@ load("@gems//tools/build_defs:gemfile.bzl", _parse_gemfile_lock = "parse_gemfile
 def snapshot_tests(test_paths):
     """
     Define a bunch of snapshot tests all at once. The paths must all conform to
-    the format expected by test_path.
+    the format expected by snapshot_test.
     """
 
     test_names = []
